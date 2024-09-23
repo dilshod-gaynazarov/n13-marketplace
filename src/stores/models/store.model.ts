@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { CategoryModel } from 'src/categories/models/category.model';
 
 interface StoreAttributes {
   name: string;
@@ -38,4 +39,7 @@ export class StoreModel extends Model<StoreModel, StoreAttributes> {
     type: DataType.STRING,
   })
   location: string;
+
+  @HasMany(() => CategoryModel)
+  categories: CategoryModel[];
 }

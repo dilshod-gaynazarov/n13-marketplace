@@ -1,8 +1,9 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { StoreModel } from './models/store.model';
+import { CategoryModel } from 'src/categories/models/category.model';
 
 @Injectable()
 export class StoresService {
@@ -26,7 +27,7 @@ export class StoresService {
 
   async findAll(): Promise<StoreModel[]> {
     try {
-      const stores = await this.storeModel.findAll();
+      const stores = await this.storeModel.findAll({ include: { model: CategoryModel } });
       return stores;
     } catch (error) {
       throw new HttpException(error.response.message, error.response.statusCode);
@@ -35,7 +36,7 @@ export class StoresService {
 
   async findOne(id: number): Promise<StoreModel> {
     try {
-      const store = await this.storeModel.findByPk(id);
+      const store = await this.storeModel.findByPk(id, { include: { model: CategoryModel } });
       if (!store) {
         throw new NotFoundException('store not found');
       }
