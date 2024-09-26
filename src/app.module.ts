@@ -3,6 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { StoresModule } from './stores/stores.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ProductsModule } from './products/products.module';
+import { AdminModule } from './admin/admin.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -22,8 +25,13 @@ import { CategoriesModule } from './categories/categories.module';
       synchronize: true,
       logging: false,
     }),
+    JwtModule.register({
+      global: true,
+    }),
     StoresModule,
     CategoriesModule,
+    ProductsModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

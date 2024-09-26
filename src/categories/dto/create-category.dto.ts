@@ -1,5 +1,15 @@
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
 export class CreateCategoryDto {
-    type: string;
-    image: string;
-    store_id: number;
+  @IsNotEmpty()
+  @IsString()
+  type: string;
+
+  @IsNotEmpty()
+  @IsString()
+  image: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  store_id: number;
 }

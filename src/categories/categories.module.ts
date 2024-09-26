@@ -9,4 +9,4 @@ import { CategoryModel } from './models/category.model';
   controllers: [CategoriesController],
   providers: [CategoriesService],
 })
-export class CategoriesModule { }
+export class CategoriesModule {}
