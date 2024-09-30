@@ -1,35 +1,44 @@
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
+  Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { Observable } from "rxjs";
 
+@Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
-
+  constructor(private readonly jwtService: JwtService) { }
   canActivate(
-    context: ExecutionContext,
+    context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const authorization = request.headers.authorization;
-    if (!authorization) {
-      throw new UnauthorizedException('Authorization is not find');
+    const req = context.switchToHttp().getRequest();
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new UnauthorizedException({
+        message: "Headerda Token berilmagan",
+      });
     }
-    const bearer = authorization.split(' ')[0];
-    const token = authorization.split(' ')[1];
-    if (!bearer || !token) {
-      throw new UnauthorizedException('Bearer or token is not given');
+    const bearer = authHeader.split(" ")[0];
+    const token = authHeader.split(" ")[1];
+    if (bearer !== "Bearer" || !token) {
+      throw new UnauthorizedException({
+        message: "Bearer va Token berilmagan",
+      });
     }
     let payload: any;
     try {
-      payload = this.jwtService.verify(token);
+      payload = this.jwtService.verify(token, {
+        secret: process.env.ACCESS_TOKEN_KEY
+      });
     } catch (error) {
-      throw new ForbiddenException('Forbidden user');
+      throw new UnauthorizedException({
+        message: "Token verificatsiyadan o'tmadi",
+        error,
+      });
     }
-    request.user = payload;
+    req.user = payload;
     return true;
   }
 }
