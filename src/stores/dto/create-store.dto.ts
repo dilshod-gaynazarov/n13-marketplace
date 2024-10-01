@@ -14,10 +14,6 @@ export class CreateStoreDto {
   name: string;
 
   @IsNotEmpty()
-  @IsString()
-  image: string;
-
-  @IsNotEmpty()
   @IsPhoneNumber('UZ')
   phone: string;
 

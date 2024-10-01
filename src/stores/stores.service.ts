@@ -10,20 +10,25 @@ import { UpdateStoreDto } from './dto/update-store.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { StoreModel } from './models/store.model';
 import { CategoryModel } from 'src/categories/models/category.model';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class StoresService {
-  constructor(@InjectModel(StoreModel) private storeModel: typeof StoreModel) {}
+  constructor(
+    @InjectModel(StoreModel) private storeModel: typeof StoreModel,
+    private readonly fileService: FileService
+  ) { }
 
-  async create(createStoreDto: CreateStoreDto): Promise<object> {
+  async create(createStoreDto: CreateStoreDto, file: Express.Multer.File): Promise<object> {
     try {
+      const image = await this.fileService.uploadFile(file);
       const exist_phone = await this.storeModel.findOne({
         where: { phone: createStoreDto.phone },
       });
       if (exist_phone) {
         throw new ConflictException('phone number already exist');
       }
-      const new_store = await this.storeModel.create(createStoreDto);
+      const new_store = await this.storeModel.create({ ...createStoreDto, image });
       return {
         message: 'New store added success',
         data: new_store,

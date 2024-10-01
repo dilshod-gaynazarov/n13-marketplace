@@ -6,12 +6,17 @@ import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { AdminModule } from './admin/admin.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { resolve } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: resolve(__dirname, '..', '..', 'uploads')
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',

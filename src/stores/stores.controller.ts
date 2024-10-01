@@ -6,18 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('stores')
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
   @Post()
-  create(@Body() createStoreDto: CreateStoreDto) {
-    return this.storesService.create(createStoreDto);
+  @UseInterceptors(FileInterceptor('image'))
+  create(
+    @Body() createStoreDto: CreateStoreDto,
+    @UploadedFile() image: Express.Multer.File
+  ) {
+    return this.storesService.create(createStoreDto, image);
   }
 
   @Get()
