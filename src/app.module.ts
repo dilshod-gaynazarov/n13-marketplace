@@ -16,6 +16,8 @@ import { resolve } from 'path';
       isGlobal: true,
     }),
     ServeStaticModule.forRoot({
+      serveRoot: '/uploads',
+      renderPath: '/uploads',
       rootPath: resolve(__dirname, '..', '..', 'uploads')
     }),
     SequelizeModule.forRoot({
@@ -39,4 +41,4 @@ import { resolve } from 'path';
     AdminModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

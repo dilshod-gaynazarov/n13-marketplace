@@ -1,5 +1,5 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { extname, join, resolve } from "path";
 import { v4 } from 'uuid';
 
@@ -17,6 +17,18 @@ export class FileService {
             return file_name;
         } catch (error) {
             throw new InternalServerErrorException(`Error on uploading file: ${error}`);
+        }
+    }
+
+    async deleteFile(file_name: string) {
+        try {
+            const file_path = resolve(__dirname, '..', '..', '..', 'uploads', file_name);
+            if (!existsSync(file_path)) {
+                throw new NotFoundException('File not found');
+            }
+            unlinkSync(file_path);
+        } catch (error) {
+            throw new InternalServerErrorException(`Error on deleting file: ${error}`);
         }
     }
 }

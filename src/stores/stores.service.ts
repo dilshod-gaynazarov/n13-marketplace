@@ -42,6 +42,9 @@ export class StoresService {
     try {
       const stores = await this.storeModel.findAll({
         include: { model: CategoryModel },
+        order: [
+          ['createdAt', 'DESC']
+        ]
       });
       return stores;
     } catch (error) {
@@ -82,6 +85,7 @@ export class StoresService {
   async remove(id: number): Promise<object> {
     try {
       const store = await this.findOne(id);
+      await this.fileService.deleteFile(store.image);
       store.destroy();
       return {
         message: 'Store deleted success',
